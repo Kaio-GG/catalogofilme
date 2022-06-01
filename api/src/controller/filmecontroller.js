@@ -1,7 +1,10 @@
-import { inserirfilmes , alterarimagem , buscartodosfilmes } from "../repository/filmesrepository.js";
+import { inserirfilmes , alterarimagem , buscartodosfilmes , buscarporid } from "../repository/filmesrepository.js";
 import { Router } from "express";
+import multer from 'multer'
+
 
 const server= Router()
+const upload = multer({dest: 'storage/capasfilmes'})
 
 server.post ('/filme', async (req,resp) =>{
     try {
@@ -39,10 +42,15 @@ server.post ('/filme', async (req,resp) =>{
 
 
 
-server.put ('/filme/:id/imagem', (req,resp) => {
+server.put ('/filme/:id/capa', upload.single('capa') , async (req,resp) => {
     try {
         const { id } = req.params
-        const resposta = alterarimagem( )
+        const imagem = req.file.path
+
+        const resposta = await alterarimagem( imagem , id )
+
+        resp.status(200).send()
+
     } catch (err) {
         resp.status(404).send({
             erro: err.message
@@ -53,7 +61,7 @@ server.put ('/filme/:id/imagem', (req,resp) => {
 server.get ('/filme', async (req,resp) => {
     try {
         const resposta = await buscartodosfilmes()
-        
+
         resp.send(resposta)
 
     } catch (err) {
@@ -63,6 +71,20 @@ server.get ('/filme', async (req,resp) => {
     }
 })
 
+server.get ('/filme/:id', async (req,resp) => {
+    try {
+        const {id} =req.params
+
+        const resposta = await buscarporid (id)
+
+        resp.send(resposta)
+
+    } catch (err) {
+        resp.status(404).send({
+            erro:err.message
+        }) 
+    }
+})
 
 
 

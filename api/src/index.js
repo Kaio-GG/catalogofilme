@@ -11,6 +11,10 @@ server.use (cors())
 server.use (express.json())
 
 
+server.use ('/storage/capasfilmes', express.static ('storage/capasfilmes'))
+
+
+
 server.use (usuariocontroller)
 server.use (filmeconttroller)
 
