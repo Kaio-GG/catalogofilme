@@ -42,6 +42,8 @@ export async function buscarporid ( id ){
     const comando = `
     SELECT  id_filme			id,
 	        nm_filme			nome,
+            ds_sinopse          sinopse,
+            img_filme           imagem,
             vl_avaliacao		avaliacao,
             dt_lancamento	    lancamento,
             bt_disponivel	    disponivel
@@ -52,3 +54,43 @@ export async function buscarporid ( id ){
     const [linhas] = await con.query  (comando , [id])
     return linhas[0] 
 }
+
+
+
+export async function buscarpornome ( nome ){
+    const comando = `
+    SELECT  id_filme			id,
+	        nm_filme			nome,
+            vl_avaliacao		avaliacao,
+            dt_lancamento	    lancamento,
+            bt_disponivel	    disponivel
+            FROM tb_filme
+        WHERE nm_filme like ? `
+
+    const [linhas] = await con.query  (comando , [`%${nome}%`])
+    return linhas[0] 
+}
+
+export async function removerFilme(id) {
+    const comando =
+        `DELETE FROM tb_filme
+                WHERE id_filme = ? `;
+
+    const [resposta] = await con.query(comando, [id]);
+    return resposta.affectedRows;
+}
+
+export async function alterarfilme(id, filme ) {
+    const comando = 
+    `  UPDATE tb_filme 
+    SET nm_filme      = ?,
+        ds_sinopse    = ?,
+        vl_avaliacao  = ?,
+        dt_lancamento = ?,
+        bt_disponivel = ?,
+        id_usuario    = ?
+  WHERE id_filme = ?`
+
+const [resposta] = await con.query(comando, [filme.nome , filme.sinopse, filme.avaliacao , filme.lancamento, filme.disponivel, filme.usuario, id ])
+return resposta.affectedRows
+} 
